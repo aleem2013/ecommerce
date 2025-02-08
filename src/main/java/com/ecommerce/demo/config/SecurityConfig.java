@@ -45,8 +45,11 @@ public class SecurityConfig {
     };
 
     private static final String[] PUBLIC_URLS = {
-        "/api/auth/**",
-        "/api/public/**",
+        "/api/auth/register", 
+        "/api/auth/login", 
+        "/api/auth/user",
+        "/api/auth/**", 
+        "/api/public/**", 
         "/actuator/**"
     };
 
@@ -64,11 +67,10 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                // .requestMatchers(PUBLIC_URLS).permitAll()
-                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/**", "/api/public/**", "/actuator/**").permitAll()
+                .requestMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated())
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+            // .oauth2ResourceServer(oauth2 -> oauth2
+            //     .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
             .addFilterBefore(
                 new JwtAuthenticationFilter(tokenProvider, userDetailsService),
                 UsernamePasswordAuthenticationFilter.class

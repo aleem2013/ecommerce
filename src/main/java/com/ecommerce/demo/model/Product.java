@@ -2,13 +2,6 @@ package com.ecommerce.demo.model;
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -45,7 +38,7 @@ public class Product {
    private String category;
 
    @Convert(converter = JsonAttributeConverter.class)
-   @Column(columnDefinition = "jsonb")
+   @Column(columnDefinition = "jsonb", name = "attributes")
    private Map<String, Object> attributes;
 
    @Version

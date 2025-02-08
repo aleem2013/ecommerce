@@ -15,9 +15,9 @@ public class JsonAttributeConverter implements AttributeConverter<Map<String, Ob
    private static final ObjectMapper objectMapper = new ObjectMapper();
 
    @Override
-   public String convertToDatabaseColumn(Map<String, Object> attribute) {
+   public String convertToDatabaseColumn(Map<String, Object> attributes) {
        try {
-           return objectMapper.writeValueAsString(attribute);
+            return attributes != null ? objectMapper.writeValueAsString(attributes) : null; //return objectMapper.writeValueAsString(attributes);
        } catch (JsonProcessingException e) {
            throw new IllegalArgumentException("Error converting map to JSON", e);
        }

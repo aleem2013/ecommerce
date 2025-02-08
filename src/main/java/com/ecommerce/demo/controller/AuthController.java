@@ -105,6 +105,7 @@ public class AuthController {
         return ResponseEntity.ok(userInfo);
     }
 
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")  // Only existing admins can create new admins
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
         log.info("Registering new user with email: {}", request.getEmail());
@@ -113,6 +114,7 @@ public class AuthController {
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(request.getPassword())
+                .roles(request.getRoles())
                 .build();
             
             UserDto createdUser = userService.createUser(userDto);

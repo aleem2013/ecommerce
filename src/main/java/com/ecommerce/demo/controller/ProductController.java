@@ -47,7 +47,7 @@ public class ProductController {
    }
 
    @PostMapping
-   @PreAuthorize("hasRole('ADMIN')")
+   @PreAuthorize("hasRole('ROLE_ADMIN')")
    public ResponseEntity<ProductResponse> createProduct(@Validated @RequestBody ProductUpdateRequest request) {
        log.info("Creating product: {}", request);
        Product product = productService.createProduct(request.toProduct());

@@ -1,5 +1,7 @@
 package com.ecommerce.demo.dto;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Email;
@@ -27,4 +29,6 @@ public class RegisterRequest {
     @Size(min = 8, message = "Password must be at least 8 characters long")
     @JsonProperty("password")
     private String password;
+
+    private Set<String> roles; 
 }
