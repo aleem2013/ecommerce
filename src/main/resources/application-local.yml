@@ -1,0 +1,102 @@
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui/index.html  # Changed from /swagger-ui.html
+    enabled: true
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  application:
+    name: ecommerce-service
+    
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ecommerce-client
+            client-secret: your-client-secret-here
+            scope: openid,profile,email,roles
+            authorization-grant-type: authorization_code
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/auth/realms/ecommerce
+            user-name-attribute: preferred_username
+            authorization-uri: http://localhost:8080/auth/realms/ecommerce/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/auth/realms/ecommerce/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/auth/realms/ecommerce/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/auth/realms/ecommerce/protocol/openid-connect/certs
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/auth/realms/ecommerce   #${JWT_ISSUER_URI}
+          jwk-set-uri: http://localhost:8080/auth/realms/ecommerce/protocol/openid-connect/certs #${JWT_JWK_SET_URI}
+            
+  zipkin:
+    base-url: http://localhost:9411
+    
+  actuator:
+    endpoints:
+      web:
+        exposure:
+          include: health,metrics,prometheus
+          
+          
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ecommerce
+    username: postgres
+    password: ecommerce-demo786
+  kafka:
+    bootstrap-servers: localhost:29092
+  data:
+    redis:
+      host: localhost
+      port: 6380
+    mongodb:
+      uri: mongodb://localhost:27018/eventstore
+  rabbitmq:
+    host: localhost
+    port: 5672
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      orderService:
+        slidingWindowSize: 100
+        permittedNumberOfCallsInHalfOpenState: 10
+        waitDurationInOpenState: 10000
+        failureRateThreshold: 50
+  retry:
+    instances:
+      orderService:
+        maxRetryAttempts: 3
+        waitDuration: 1000
+        
+server:
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 20
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+
+app:
+  jwt:
+    secret: WpV4CKxXqbpFxtgQa5PEjfp7ArhDPZAR2vNm8uHycBkL9YwJ3n  # replace with your secure secret
+    expiration: 86400000  # 24 hours in milliseconds
+
+  security:
+    jwt:
+      base64-secret: WpV4CKxXqbpFxtgQa5PEjfp7ArhDPZAR2vNm8uHycBkL9YwJ3n
+      token-validity-in-seconds: 86400
+      token-validity-in-seconds-for-remember-me: 2592000
+
+postgres:
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U postgres -d ecommerce"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 10s
