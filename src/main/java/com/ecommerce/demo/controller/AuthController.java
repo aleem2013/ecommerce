@@ -17,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,10 +26,11 @@ import com.ecommerce.demo.auth.LoginResponse;
 import com.ecommerce.demo.auth.UserInfo;
 import com.ecommerce.demo.dto.RegisterRequest;
 import com.ecommerce.demo.dto.UserDto;
+import com.ecommerce.demo.error.ErrorResponse;
 import com.ecommerce.demo.service.JwtTokenProvider;
 import com.ecommerce.demo.service.UserService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -93,18 +95,24 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
         log.info("Registering new user with email: {}", request.getEmail());
-        UserDto userDto = UserDto.builder()
-            .name(request.getName())
-            .email(request.getEmail())
-            .password(request.getPassword())
-            .build();
-        log.info("******** Request details {}", userDto.toString());
-        
-        UserDto createdUser = userService.createUser(userDto);
-        log.info("*************** User registered *********** {}", createdUser.toString());
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        try {
+            UserDto userDto = UserDto.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
+            log.info("******** Request details {}", userDto.toString());
+            
+            UserDto createdUser = userService.createUser(userDto);
+            log.info("Successfully registered user with email: {}", createdUser.getEmail());
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        } catch (Exception e) {
+            log.error("Registration failed", e);
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse("Registration failed: " + e.getMessage()));
+        }
     }
     
     private List<String> extractRoles(Map<String, Object> claims) {

@@ -82,7 +82,7 @@ public class SecurityConfig {
                 //             "/swagger-ui/index.css",
                 //             "/swagger-ui/favicon-32x32.png"
                 //            ).permitAll()
-                .requestMatchers("/api/auth/**", "/api/public/**", "/actuator/**").permitAll()
+                .requestMatchers("/api/auth/register", "/api/auth/**", "/api/public/**", "/actuator/**").permitAll()
                 .anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
