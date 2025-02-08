@@ -65,24 +65,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 // .requestMatchers(PUBLIC_URLS).permitAll()
-                // .requestMatchers(
-                //             "/actuator/health",
-                //             "/v3/api-docs/**",
-                //             "/swagger-ui/**",
-                //             "/swagger-ui.html",
-                //             "/swagger-ui/index.html",
-                //             "/swagger-resources/**",
-                //             "/webjars/**",
-                //             "/api-docs/**",
-                //             "/v3/api-docs/swagger-config",
-                //             "/swagger-ui/swagger-ui.css",
-                //             "/swagger-ui/swagger-ui-bundle.js",
-                //             "/swagger-ui/swagger-ui-standalone-preset.js",
-                //             "/swagger-ui/swagger-initializer.js",
-                //             "/swagger-ui/index.css",
-                //             "/swagger-ui/favicon-32x32.png"
-                //            ).permitAll()
-                .requestMatchers("/api/auth/register", "/api/auth/**", "/api/public/**", "/actuator/**").permitAll()
+                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/**", "/api/public/**", "/actuator/**").permitAll()
                 .anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))

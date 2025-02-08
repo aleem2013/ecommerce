@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +33,7 @@ import com.ecommerce.demo.error.ErrorResponse;
 import com.ecommerce.demo.service.JwtTokenProvider;
 import com.ecommerce.demo.service.UserService;
 
-
+import io.jsonwebtoken.security.Keys;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +41,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.validation.FieldError;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.util.Base64;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -62,6 +68,10 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
+
+        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        String secretString = Base64.getEncoder().encodeToString(key.getEncoded());
+        log.info("################ Key : {}", secretString);
         
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);

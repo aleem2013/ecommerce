@@ -91,12 +91,12 @@ server:
 
 app:
   jwt:
-    secret: WpV4CKxXqbpFxtgQa5PEjfp7ArhDPZAR2vNm8uHycBkL9YwJ3n  # replace with your secure secret
+    secret: V5GtuC6M3M68QetvZGG+XOPj+pWfGL4ujOOGIZC4Ck9gBKJGv75+Mx7/rjJj+EYENF4QEPugKpnWeIA+CfEf4Q==  # replace with your secure secret
     expiration: 86400000  # 24 hours in milliseconds
 
   security:
     jwt:
-      base64-secret: WpV4CKxXqbpFxtgQa5PEjfp7ArhDPZAR2vNm8uHycBkL9YwJ3n
+      base64-secret: V5GtuC6M3M68QetvZGG+XOPj+pWfGL4ujOOGIZC4Ck9gBKJGv75+Mx7/rjJj+EYENF4QEPugKpnWeIA+CfEf4Q==
       token-validity-in-seconds: 86400
       token-validity-in-seconds-for-remember-me: 2592000
 
