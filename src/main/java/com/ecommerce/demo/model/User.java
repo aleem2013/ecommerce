@@ -54,7 +54,10 @@ public class User {
     
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id")
+    )
     @Column(name = "role")
     private Set<String> roles = new HashSet<>();
     
@@ -66,4 +69,12 @@ public class User {
     
     @Builder.Default
     private boolean active = true;
+
+    // Make sure roles are initialized in constructor
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.roles = new HashSet<>();
+    }
 }

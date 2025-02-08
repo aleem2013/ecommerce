@@ -31,12 +31,20 @@ public class UserService {
         User user = userMapper.toEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+         // Initialize roles if null
+        if (user.getRoles() == null) {
             user.setRoles(new HashSet<>());
+        }
+
+        // Add ROLE_USER if roles is empty
+        if (user.getRoles().isEmpty()) {
             user.getRoles().add("ROLE_USER");
         }
         
+        // Ensure roles are attached to the persistence context
         User savedUser = userRepository.save(user);
+        userRepository.flush();  // Force immediate persistence
+        
         return userMapper.toDto(savedUser);
     }
     

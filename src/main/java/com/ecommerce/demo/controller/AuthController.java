@@ -25,6 +25,7 @@ import com.ecommerce.demo.auth.LoginRequest;
 import com.ecommerce.demo.auth.LoginResponse;
 import com.ecommerce.demo.auth.UserInfo;
 import com.ecommerce.demo.dto.RegisterRequest;
+import com.ecommerce.demo.dto.RegisterResponse;
 import com.ecommerce.demo.dto.UserDto;
 import com.ecommerce.demo.error.ErrorResponse;
 import com.ecommerce.demo.service.JwtTokenProvider;
@@ -103,11 +104,10 @@ public class AuthController {
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .build();
-            log.info("******** Request details {}", userDto.toString());
             
             UserDto createdUser = userService.createUser(userDto);
             log.info("Successfully registered user with email: {}", createdUser.getEmail());
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(RegisterResponse.fromUserDto(createdUser));
         } catch (Exception e) {
             log.error("Registration failed", e);
             return ResponseEntity.badRequest()

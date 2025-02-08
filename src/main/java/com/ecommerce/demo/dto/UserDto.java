@@ -1,6 +1,9 @@
 package com.ecommerce.demo.dto;
 
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,6 +27,7 @@ public class UserDto {
     private String email;
     
     @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)  // Only deserialize, never serialize
     @Size(min = 8, max = 100)
     private String password;
     
