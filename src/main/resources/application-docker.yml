@@ -57,6 +57,15 @@ spring:
     password: ecommerce-demo786
   kafka:
     bootstrap-servers: kafka:9092
+    producer:
+      retries: 3
+      acks: all
+      properties:
+        '[retry.backoff.ms]': 1000
+        '[max.block.ms]': 60000
+    consumer:
+      group-id: ecommerce-group
+      auto-offset-reset: earliest
   data:
     redis:
       host: ${SPRING_REDIS_HOST:redis}

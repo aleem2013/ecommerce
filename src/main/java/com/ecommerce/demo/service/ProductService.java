@@ -14,6 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.demo.constants.KafkaConstants;
 import com.ecommerce.demo.exception.InsufficientStockException;
 import com.ecommerce.demo.exception.InvalidProductException;
 import com.ecommerce.demo.exception.ProductNotFoundException;
@@ -122,9 +123,9 @@ public class ProductService {
    private void sendProductEvent(String eventType, Product product) {
     try {
         ProductEvent event = new ProductEvent(product.getId(), eventType, product);
-        kafkaTemplate.send("product-events", event)
+        kafkaTemplate.send(KafkaConstants.PRODUCT_EVENTS_TOPIC, event)
             .thenApply(result -> {
-                log.debug("Product event sent successfully");
+                log.info("Product event sent successfully");
                 return result;
             })
             .exceptionally(ex -> {

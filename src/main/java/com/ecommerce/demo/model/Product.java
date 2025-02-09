@@ -5,11 +5,15 @@ import java.math.BigDecimal;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.Map;
+
 
 @Entity
 @Table(name = "products")
@@ -37,8 +41,8 @@ public class Product {
 
    private String category;
 
-   @Convert(converter = JsonAttributeConverter.class)
-   @Column(columnDefinition = "jsonb", name = "attributes")
+   @JdbcTypeCode(SqlTypes.JSON)
+   @Column(columnDefinition = "jsonb")
    private Map<String, Object> attributes;
 
    @Version

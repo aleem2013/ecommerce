@@ -77,6 +77,10 @@ public class KafkaConfig {
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configs.put(ProducerConfig.RETRIES_CONFIG, 3);
+        configs.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, 1000);
+        configs.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 60000);
+        configs.put(ProducerConfig.ACKS_CONFIG, "all");
         return configs;
     }
 }
