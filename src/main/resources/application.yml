@@ -88,6 +88,18 @@ spring:
     username: guest
     password: guest
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: balancededlifeacadey1@gmail.com
+    password: fdss ssss sdss sdsd
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 resilience4j:
   circuitbreaker:
     instances:

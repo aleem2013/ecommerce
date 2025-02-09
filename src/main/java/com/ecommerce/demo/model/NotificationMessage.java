@@ -1,5 +1,6 @@
 package com.ecommerce.demo.model;
 
+import com.ecommerce.demo.constants.NotificationType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +18,8 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationMessage {
+public class NotificationMessage implements Serializable {
+   private static final long serialVersionUID = 1L;
    
    @NotBlank(message = "Recipient email is required")
    @Email(message = "Invalid email format")
@@ -33,13 +37,7 @@ public class NotificationMessage {
    private Map<String, Object> metadata;
 
    @Builder.Default
-   private LocalDateTime timestamp = LocalDateTime.now();
-
-   public enum NotificationType {
-       EMAIL,
-       SMS,
-       PUSH
-   }
+   private LocalDateTime timestamp = LocalDateTime.now();   
 
    public void addMetadata(String key, Object value) {
        if (metadata == null) {
