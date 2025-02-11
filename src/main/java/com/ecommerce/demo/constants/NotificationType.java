@@ -3,5 +3,6 @@ package com.ecommerce.demo.constants;
 public enum NotificationType {
     EMAIL,
     SMS,
-    PUSH
+    PUSH,
+    ORDER_CONFIRMATION
 }

@@ -1,7 +1,9 @@
 package com.ecommerce.demo.service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,6 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.ecommerce.demo.constants.NotificationType;
 import com.ecommerce.demo.error.ErrorResponse;
 import com.ecommerce.demo.exception.InsufficientStockException;
 import com.ecommerce.demo.exception.OrderNotFoundException;
@@ -65,10 +68,21 @@ public class OrderService {
    @Transactional
    public Order createOrder(OrderRequest request) {
        // Validate stock availability
-       validateStock(request.getItems());
+       //validateStock(request.getItems());
+
+       // Validate stock and get product details
+        Map<Long, Product> productMap = validateStockAndGetProducts(request.getItems());
 
        // Create order
        Order order = request.toOrder();
+
+        // Set product details
+        order.getItems().forEach(item -> {
+            Product product = productMap.get(item.getProductId());
+            item.setProductName(product.getName());
+            item.setPrice(product.getPrice());
+        });
+
        order = orderRepository.save(order);
 
        // Update stock
@@ -112,16 +126,33 @@ public class OrderService {
         }
    }
 
-   private void validateStock(List<OrderItemRequest> items) {
-       for (OrderItemRequest item : items) {
-           Product product = productService.getProduct(item.getProductId())
-                   .orElseThrow(() -> new ProductNotFoundException(item.getProductId()));
+   private Map<Long, Product> validateStockAndGetProducts(List<OrderItemRequest> items) {
+        Map<Long, Product> productMap = new HashMap<>();
+        
+        for (OrderItemRequest item : items) {
+            Product product = productService.getProduct(item.getProductId())
+                    .orElseThrow(() -> new ProductNotFoundException(item.getProductId()));
+            
+            if (product.getStock() < item.getQuantity()) {
+                throw new InsufficientStockException(product.getId(), product.getStock(), item.getQuantity());
+            }
+            
+            productMap.put(product.getId(), product);
+        }
+        
+        return productMap;
+    }
+
+//    private void validateStock(List<OrderItemRequest> items) {
+//        for (OrderItemRequest item : items) {
+//            Product product = productService.getProduct(item.getProductId())
+//                    .orElseThrow(() -> new ProductNotFoundException(item.getProductId()));
            
-           if (product.getStock() < item.getQuantity()) {
-               throw new InsufficientStockException(product.getId(), product.getStock(), item.getQuantity());
-           }
-       }
-   }
+//            if (product.getStock() < item.getQuantity()) {
+//                throw new InsufficientStockException(product.getId(), product.getStock(), item.getQuantity());
+//            }
+//        }
+//    }
 
    @Transactional
    private void updateProductStock(List<OrderItem> items) {
@@ -150,9 +181,12 @@ public class OrderService {
    private void sendOrderNotification(Order order) {
        NotificationMessage notification = NotificationMessage.builder()
                .to(order.getCustomerEmail())
+               .type(NotificationType.ORDER_CONFIRMATION)
                .subject("Order Confirmation")
                .message("Your order " + order.getId() + " has been created")
                .build();
+
+        notification.addMetadata("order", order);
 
        circuitBreaker.executeSupplier(() -> {
            rabbitTemplate.convertAndSend("notification-exchange", 

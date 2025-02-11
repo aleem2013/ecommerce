@@ -41,6 +41,9 @@ public class OrderRequest {
        @NotNull(message = "Product ID is required")
        private Long productId;
 
+       //@NotNull(message = "Product ID is required")
+       private String productName;
+
        @NotNull(message = "Quantity is required")
        @Positive(message = "Quantity must be positive")
        private Integer quantity;
@@ -54,8 +57,8 @@ public class OrderRequest {
         List<OrderItem> orderItems = items.stream()
             .map(item -> OrderItem.builder()
                 .productId(item.getProductId())
+                // Don't set product name and price here, will be set after product validation
                 .quantity(item.getQuantity())
-                .price(item.getPrice())
                 .build())
             .toList();
 
